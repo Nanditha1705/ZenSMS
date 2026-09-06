@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Upload Marks</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
+</head>
+<body class="bg-light">
+<div th:replace="~{fragments/navbar :: adminNav}"></div>
+
+<div class="container py-4">
+    <div th:if="${param.success}" class="alert alert-success alert-dismissible fade show">
+        <i class="bi bi-check-circle me-2"></i>Marks saved successfully!
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="row g-4">
+        <!-- CSV Upload -->
+        <div class="col-md-5">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0"><i class="bi bi-file-earmark-spreadsheet me-2"></i>Upload CSV</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted small">
+                        CSV columns: <code>rollNumber, subjectName, marksObtained, maxMarks, semester, examType</code>
+                    </p>
+                    <form th:action="@{/admin/marks/upload}" method="post" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <input type="file" name="file" class="form-control" accept=".csv" required/>
+                        </div>
+                        <button type="submit" class="btn btn-danger w-100">
+                            <i class="bi bi-upload me-1"></i>Upload CSV
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Manual Entry -->
+        <div class="col-md-7">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="bi bi-pencil-square me-2"></i>Manual Mark Entry</h5>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/admin/marks/add}" method="post">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label">Student</label>
+                                <select name="studentId" class="form-select" required>
+                                    <option value="" disabled selected>-- Select Student --</option>
+                                    <option th:each="s : ${students}"
+                                            th:value="${s.id}"
+                                            th:text="${s.fullName + ' (' + s.rollNumber + ')'}"></option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Subject Name</label>
+                                <input name="subjectName" class="form-control" placeholder="e.g. Mathematics" required/>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Exam Type</label>
+                                <select name="examType" class="form-select">
+                                    <option value="MID">Mid Term</option>
+                                    <option value="FINAL">Final</option>
+                                    <option value="INTERNAL">Internal</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Marks Obtained</label>
+                                <input name="marksObtained" type="number" class="form-control" min="0" required/>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Max Marks</label>
+                                <input name="maxMarks" type="number" class="form-control" min="0" required/>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Semester</label>
+                                <select name="semester" class="form-select">
+                                    <option th:each="i : ${#numbers.sequence(1,8)}"
+                                            th:value="${i}" th:text="'Sem ' + ${i}"></option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-dark w-100">
+                                    <i class="bi bi-plus-circle me-1"></i>Add Mark
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

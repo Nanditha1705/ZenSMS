@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>My Marks</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
+</head>
+<body class="bg-light">
+<div th:replace="~{fragments/navbar :: studentNav}"></div>
+
+<div class="container py-4">
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="bi bi-journal-text me-2"></i>Mark Sheet
+                — <span th:text="${student.fullName}"></span></h5>
+            <span class="badge bg-light text-dark" th:text="'Roll: ' + ${student.rollNumber}"></span>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Subject</th>
+                            <th>Exam Type</th>
+                            <th>Semester</th>
+                            <th>Marks</th>
+                            <th>Percentage</th>
+                            <th>Grade</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="m, i : ${marks}">
+                            <td th:text="${i.count}"></td>
+                            <td th:text="${m.subjectName}"></td>
+                            <td>
+                                <span class="badge"
+                                      th:classappend="${m.examType == 'FINAL'} ? 'bg-danger' : (${m.examType == 'MID'} ? 'bg-warning text-dark' : 'bg-info text-dark')"
+                                      th:text="${m.examType}"></span>
+                            </td>
+                            <td><span class="badge bg-secondary" th:text="'Sem ' + ${m.semester}"></span></td>
+                            <td>
+                                <strong th:text="${m.marksObtained}"></strong>
+                                <span class="text-muted" th:text="' / ' + ${m.maxMarks}"></span>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="progress flex-grow-1" style="height:8px">
+                                        <div class="progress-bar"
+                                             th:style="'width:' + ${(m.marksObtained * 100 / m.maxMarks)} + '%'"
+                                             th:classappend="${(m.marksObtained * 100 / m.maxMarks) >= 75} ? 'bg-success' : (${(m.marksObtained * 100 / m.maxMarks) >= 50} ? 'bg-warning' : 'bg-danger')"></div>
+                                    </div>
+                                    <small th:text="${(m.marksObtained * 100 / m.maxMarks)} + '%'"></small>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge"
+                                      th:with="pct=${m.marksObtained * 100 / m.maxMarks}"
+                                      th:classappend="${pct >= 90} ? 'bg-success' : (${pct >= 75} ? 'bg-primary' : (${pct >= 60} ? 'bg-info text-dark' : (${pct >= 50} ? 'bg-warning text-dark' : 'bg-danger')))"
+                                      th:text="${pct >= 90} ? 'A+' : (${pct >= 75} ? 'A' : (${pct >= 60} ? 'B' : (${pct >= 50} ? 'C' : 'F')))">
+                                </span>
+                            </td>
+                        </tr>
+                        <tr th:if="${marks.empty}">
+                            <td colspan="7" class="text-center text-muted py-4">
+                                <i class="bi bi-inbox fs-3 d-block mb-2"></i>No marks uploaded yet.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

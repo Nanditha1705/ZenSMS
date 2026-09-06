@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Attendance</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
+</head>
+<body class="bg-light">
+<div th:replace="~{fragments/navbar :: studentNav}"></div>
+
+<div class="container py-4">
+    <div th:if="${param.success}" class="alert alert-success alert-dismissible fade show">
+        <i class="bi bi-check-circle me-2"></i>Attendance marked for today!
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="row g-4">
+        <!-- Mark Attendance -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="bi bi-calendar-check me-2"></i>Mark Today</h5>
+                </div>
+                <div class="card-body text-center">
+                    <p class="text-muted mb-1">Today's Date</p>
+                    <h4 class="mb-3" id="today-date"></h4>
+                    <form th:action="@{/student/attendance/mark}" method="post">
+                        <div class="d-grid gap-2">
+                            <button type="submit" name="status" value="PRESENT"
+                                    class="btn btn-success btn-lg">
+                                <i class="bi bi-check-circle me-1"></i>Mark Present
+                            </button>
+                            <button type="submit" name="status" value="ABSENT"
+                                    class="btn btn-outline-danger">
+                                <i class="bi bi-x-circle me-1"></i>Mark Absent
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Stats Card -->
+            <div class="col-6">
+    <h3 class="text-success fw-bold" th:text="${#lists.size(attendanceList.?[status == 'PRESENT'])}">0</h3>
+    <small class="text-muted">Present</small>
+</div>
+<div class="col-6">
+    <h3 class="text-danger fw-bold" th:text="${#lists.size(attendanceList.?[status == 'ABSENT'])}">0</h3>
+    <small class="text-muted">Absent</small>
+</div>
+        </div>
+
+        <!-- Attendance History -->
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Attendance History</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-secondary">
+                                <tr><th>#</th><th>Date</th><th>Day</th><th>Status</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="a, i : ${attendanceList}">
+                                    <td th:text="${i.count}"></td>
+                                    <td th:text="${a.date}"></td>
+                                    <td class="text-muted small"
+                                        th:text="${#temporals.format(a.date, 'EEEE')}"></td>
+                                    <td>
+                                        <span th:if="${a.status == 'PRESENT'}"
+                                              class="badge bg-success">
+                                            <i class="bi bi-check-circle me-1"></i>Present
+                                        </span>
+                                        <span th:unless="${a.status == 'PRESENT'}"
+                                              class="badge bg-danger">
+                                            <i class="bi bi-x-circle me-1"></i>Absent
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr th:if="${attendanceList.empty}">
+                                    <td colspan="4" class="text-center text-muted py-4">
+                                        <i class="bi bi-calendar-x fs-3 d-block mb-2"></i>
+                                        No attendance records yet.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const d = new Date();
+    document.getElementById('today-date').textContent =
+        d.toLocaleDateString('en-IN', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+</script>
+</body>
+</html>

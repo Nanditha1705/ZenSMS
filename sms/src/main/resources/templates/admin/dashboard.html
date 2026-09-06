@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
+</head>
+<body class="bg-light">
+
+<div th:replace="~{fragments/navbar :: adminNav}"></div>
+
+<div class="container py-4">
+
+    <!-- Stats Row -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm text-center py-3">
+                <div class="card-body">
+                    <i class="bi bi-people-fill fs-1 text-primary"></i>
+                    <h2 class="fw-bold mt-2" th:text="${students.size()}">0</h2>
+                    <p class="text-muted mb-0">Total Students</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm text-center py-3">
+                <div class="card-body">
+                    <i class="bi bi-building fs-1 text-success"></i>
+                    <h2 class="fw-bold mt-2" th:text="${departments.size()}">0</h2>
+                    <p class="text-muted mb-0">Departments</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm text-center py-3">
+                <div class="card-body">
+                    <i class="bi bi-clipboard-data fs-1 text-warning"></i>
+                    <h2 class="fw-bold mt-2">—</h2>
+                    <p class="text-muted mb-0">Marks Uploaded</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm text-center py-3">
+                <div class="card-body">
+                    <i class="bi bi-calendar-check fs-1 text-danger"></i>
+                    <h2 class="fw-bold mt-2">—</h2>
+                    <p class="text-muted mb-0">Attendance Today</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <a th:href="@{/admin/students}" class="btn btn-primary w-100 py-2">
+                <i class="bi bi-person-plus me-1"></i>Add Student
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a th:href="@{/admin/departments}" class="btn btn-success w-100 py-2">
+                <i class="bi bi-building me-1"></i>Add Department
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a th:href="@{/admin/assign}" class="btn btn-warning w-100 py-2">
+                <i class="bi bi-person-check me-1"></i>Assign Dept
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a th:href="@{/admin/marks}" class="btn btn-danger w-100 py-2">
+                <i class="bi bi-upload me-1"></i>Upload Marks
+            </a>
+        </div>
+    </div>
+
+    <!-- Students Table -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="bi bi-people me-2"></i>All Students</h5>
+            <input type="text" id="searchInput" class="form-control form-control-sm w-25"
+                   placeholder="Search..." onkeyup="searchTable()"/>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0" id="studentTable">
+                    <thead class="table-secondary">
+                        <tr>
+                            <th>#</th>
+                            <th>Roll No</th>
+                            <th>Full Name</th>
+                            <th>Department</th>
+                            <th>Semester</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="s, i : ${students}">
+                            <td th:text="${i.count}"></td>
+                            <td><span class="badge bg-secondary" th:text="${s.rollNumber}"></span></td>
+                            <td th:text="${s.fullName}"></td>
+                            <td>
+                                <span th:if="${s.department != null}"
+                                      class="badge bg-primary" th:text="${s.department.name}"></span>
+                                <span th:unless="${s.department != null}"
+                                      class="badge bg-warning text-dark">Not Assigned</span>
+                            </td>
+                            <td>
+                                <span th:if="${s.semester > 0}"
+                                      class="badge bg-info text-dark" th:text="'Sem ' + ${s.semester}"></span>
+                                <span th:unless="${s.semester > 0}" class="text-muted">—</span>
+                            </td>
+                            <td th:text="${s.email}"></td>
+                            <td><span class="badge bg-success">Active</span></td>
+                        </tr>
+                        <tr th:if="${students.empty}">
+                            <td colspan="7" class="text-center text-muted py-4">No students found.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function searchTable() {
+    const input = document.getElementById('searchInput').value.toLowerCase();
+    document.querySelectorAll('#studentTable tbody tr').forEach(row => {
+        row.style.display = row.innerText.toLowerCase().includes(input) ? '' : 'none';
+    });
+}
+</script>
+</body>
+</html>
