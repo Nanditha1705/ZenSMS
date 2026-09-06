@@ -7,8 +7,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class SmsApplication {
 
 	public static void main(String[] args) {
+		SpringApplication app = new SpringApplication(SmsApplication.class);
+        String dbUrl = System.getenv("DATABASE_URL");
+        if (dbUrl != null && !dbUrl.isEmpty()) {
+            app.setAdditionalProfiles("prod");
+        }
+        app.run(args);
 		
-		SpringApplication.run(SmsApplication.class, args);
 	}
 	
 }
